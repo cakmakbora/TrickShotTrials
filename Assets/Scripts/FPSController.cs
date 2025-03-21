@@ -18,6 +18,13 @@ public class FPSController : MonoBehaviour
     private float xRotation = 0f;
     private float yRotation = 0f;
 
+    [Header("Throw Settings")]
+    public float throwForce = 10f;
+
+    public GameObject ballPosition;
+    public GameObject Player;
+    public GameObject currentBall;
+
     private Rigidbody rb;
     private bool closed = true;
     void Start()
@@ -51,6 +58,13 @@ public class FPSController : MonoBehaviour
         
         Move();
         Jump();
+        if (currentBall != null)
+            ThrowBall();
+        if (currentBall != null)
+        {
+            currentBall.transform.position = ballPosition.transform.position;
+            currentBall.transform.rotation = ballPosition.transform.rotation;
+        }
     }
 
     private void LookAround()
@@ -96,5 +110,47 @@ public class FPSController : MonoBehaviour
     {
         // Raycast down just below the player
         return Physics.Raycast(transform.position, Vector3.down, 1.5f);
+    }
+
+    private void GrabBall(GameObject Ball)
+    {
+        Ball.transform.position = ballPosition.transform.position;
+        Rigidbody Ballrb = Ball.GetComponent<Rigidbody>();
+        Ballrb.isKinematic = true;
+        Ball.GetComponent<Collider>().enabled = false;
+        Ballrb.detectCollisions = false;
+        currentBall = Ball;
+        
+    }
+
+    private void ThrowBall()
+    {
+        if (currentBall != null && Input.GetMouseButtonDown(0))
+        {
+            Rigidbody Ballrb = currentBall.GetComponent<Rigidbody>();
+            Ballrb.isKinematic = false;
+            Ballrb.detectCollisions = true;
+            currentBall.GetComponent<Collider>().enabled = true;
+
+            Vector3 throwDirection = playerCamera.forward;
+            Ballrb.AddForce(throwDirection * throwForce, ForceMode.Impulse);
+            Ballrb.AddTorque(Random.insideUnitSphere * 5f, ForceMode.Impulse);
+
+            currentBall = null; // Done throwing
+        }
+    }
+
+    
+        
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.CompareTag ("BallGrab"))
+        {
+            GameObject parentObject = other.transform.parent.gameObject;
+            GrabBall(parentObject);
+            other.gameObject.SetActive(false);
+            
+        }
+        
     }
 }
