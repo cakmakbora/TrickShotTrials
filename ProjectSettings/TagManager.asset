@@ -5,6 +5,11 @@ TagManager:
   serializedVersion: 2
   tags:
   - BallGrab
+  - Ball
+  - ScoredBall
+  - SlowArea
+  - MissedBall
+  - ThrownBall
   layers:
   - Default
   - TransparentFX
@@ -12,7 +17,7 @@ TagManager:
   - 
   - Water
   - UI
-  - 
+  - Ball
   - 
   - 
   - 

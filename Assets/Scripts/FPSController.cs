@@ -20,13 +20,17 @@ public class FPSController : MonoBehaviour
 
     [Header("Throw Settings")]
     public float throwForce = 10f;
+    public float strongthrowForce = 15f;
+    private float currentthrowForce;
 
+    [Header("Others")]
     public GameObject ballPosition;
     public GameObject Player;
     public GameObject currentBall;
 
     private Rigidbody rb;
     private bool closed = true;
+    private bool hasball = false;
     void Start()
     {
         rb = GetComponent<Rigidbody>();
@@ -55,12 +59,15 @@ public class FPSController : MonoBehaviour
         {
             LookAround();
         }
+        if (!hasball)
+        {
+            Move();
+        }
         
-        Move();
         Jump();
         if (currentBall != null)
             ThrowBall();
-        if (currentBall != null)
+        if (currentBall != null && hasball)
         {
             currentBall.transform.position = ballPosition.transform.position;
             currentBall.transform.rotation = ballPosition.transform.rotation;
@@ -120,6 +127,8 @@ public class FPSController : MonoBehaviour
         Ball.GetComponent<Collider>().enabled = false;
         Ballrb.detectCollisions = false;
         currentBall = Ball;
+        hasball = true;
+        gameObject.GetComponent<Rigidbody>().velocity = Vector3.zero;
         
     }
 
@@ -131,12 +140,22 @@ public class FPSController : MonoBehaviour
             Ballrb.isKinematic = false;
             Ballrb.detectCollisions = true;
             currentBall.GetComponent<Collider>().enabled = true;
+            Ballrb.WakeUp();
 
             Vector3 throwDirection = playerCamera.forward;
-            Ballrb.AddForce(throwDirection * throwForce, ForceMode.Impulse);
+            if (IsGrounded())
+            {
+                 currentthrowForce = throwForce;
+            }
+            else
+                 currentthrowForce = strongthrowForce;
+            Ballrb.AddForce(throwDirection * currentthrowForce, ForceMode.Impulse);
             Ballrb.AddTorque(Random.insideUnitSphere * 5f, ForceMode.Impulse);
+            currentBall.tag = "ThrownBall";
 
             currentBall = null; // Done throwing
+            hasball = false;
+            
         }
     }
 
