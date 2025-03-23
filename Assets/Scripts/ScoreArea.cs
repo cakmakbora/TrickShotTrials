@@ -7,18 +7,36 @@ public class ScoreArea : MonoBehaviour
 {
     public GameManager gameManager;
     public GameManager.BallType type;
+    public FPSController FPController;
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("ThrownBall"))
+        if (other.CompareTag("FirstThrownBall"))
         {
             if (other.transform.position.y > transform.position.y)
             {
+                FPController.currentBall = null;
                 Ball ballScript = other.GetComponent<Ball>();
                 type = ballScript.ballType;
                 if (ballScript != null)
                 {
                     gameManager.AddScore(ballScript.ballValue,type);
-                    other.tag = "ScoredBall";
+                    other.tag = "FirstScoredBall";
+                    
+                }
+            }
+        }
+        else if (other.CompareTag("SecondThrownBall"))
+        {
+            if (other.transform.position.y > transform.position.y)
+            {
+                FPController.currentBall = null;
+                Ball ballScript = other.GetComponent<Ball>();
+                type = ballScript.ballType;
+                if (ballScript != null)
+                {
+                    gameManager.AddScore(ballScript.ballValue, type);
+                    other.tag = "SecondScoredBall";
+                    
                 }
             }
         }

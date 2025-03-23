@@ -14,10 +14,18 @@ public class GameManager : MonoBehaviour
     public int hitcounter;
     public int misscounter;
     public int currentscore;
+    
+    public bool again = false;
 
     public GameObject normalBall;
     public GameObject bouncyBall;
     public GameObject heavyBall;
+
+    public GameObject normalBall1;
+    public GameObject bouncyBall1;
+    public GameObject heavyBall1;
+
+    public FPSController FPcontroller;
 
     public enum BallType
     {
@@ -26,43 +34,76 @@ public class GameManager : MonoBehaviour
         Heavy
     }
 
-    public GameObject GenerateBall( Vector3 spawnPos)
+    public GameObject GenerateBall(Vector3 spawnPos)
     {
         GameObject ballPrefab = null;
-        BallType type;
+        BallType type = BallType.Normal;
 
-        if (hitcounter == 3)
+        if (again)
         {
-            ballPrefab = bouncyBall;
-            hitcounter = 0;
-            type = BallType.Bouncy;
-        }
-        else if (misscounter == 3)
-        {
-            ballPrefab = heavyBall;
-            misscounter = 0;
-            type = BallType.Heavy;
+       
+            if (FPcontroller.currentBall != null)
+            {
+                type = FPcontroller.currentBall.GetComponent<Ball>().ballType;
+            }
+            ballPrefab = GetBallPrefab(type);
+            if (ballPrefab != null)
+            {
+                GameObject spawnedBall = Instantiate(ballPrefab, spawnPos, Quaternion.identity);
+                Ball ballScript = spawnedBall.GetComponent<Ball>();
+                ballScript.ballType = type;
+                spawnedBall.GetComponent<Collider>().enabled = false;
+                spawnedBall.GetComponent<Rigidbody>().detectCollisions = false;
+                spawnedBall.GetComponent<Rigidbody>().isKinematic = true;
+                FPcontroller.currentBall = spawnedBall;
+                FPcontroller.hasball = true;
+                return spawnedBall;
+            }
         }
         else
         {
-            ballPrefab = normalBall;
-            type = BallType.Normal;
+           
+            if (hitcounter >= 3)
+            {
+                ballPrefab = bouncyBall;
+                hitcounter = 0;
+                type = BallType.Bouncy;
+            }
+            else if (misscounter >= 3)
+            {
+                ballPrefab = heavyBall;
+                misscounter = 0;
+                type = BallType.Heavy;
+            }
+            else
+            {
+                ballPrefab = normalBall;
+                type = BallType.Normal;
+            }
+            if (ballPrefab != null)
+            {
+                var spawnedBall = Instantiate(ballPrefab, spawnPos, Quaternion.identity);
+                var ballScript = spawnedBall.GetComponent<Ball>();
+                ballScript.ballType = type;
+
+                return spawnedBall;
+            }
         }
-            
+
         
 
-
-        if (ballPrefab != null)
-        {
-            Quaternion spawnRot = Quaternion.Euler(0, 0, 0);
-            GameObject spawnedBall = Instantiate(ballPrefab, spawnPos, spawnRot);
-            Ball ballScript = spawnedBall.GetComponent<Ball>();
-            ballScript.ballType = type; // Assign type
-            return spawnedBall;
-        }
-
         return null;
+    }
 
+    private GameObject GetBallPrefab(BallType type)
+    {
+        return type switch
+        {
+            BallType.Normal => normalBall1,
+            BallType.Bouncy => bouncyBall1,
+            BallType.Heavy => heavyBall1,
+            _ => normalBall,
+        };
     }
     public void AddScore(int points,BallType type)
     {
@@ -72,16 +113,23 @@ public class GameManager : MonoBehaviour
             hitcounter++;
         }
         scoresinarow++;
+        
         Debug.Log("Scored! +" + points + " points. Total Score: " + currentscore);
     }
 
-    public void Miss(BallType type)
+    public void Miss(BallType type,bool isitfirst)
     {
-        if (type == BallType.Normal)
+        if (!isitfirst)
         {
-            misscounter++;
+            if (type == BallType.Normal)
+            {
+                misscounter++;
+                scoresinarow = 0; // Reset streak if missed
+            }
         }
-        scoresinarow = 0; // Reset streak if missed
+        
+        
+        
         Debug.Log("Missed! Current misses: " + misscounter);
     }
 
@@ -104,4 +152,5 @@ public class GameManager : MonoBehaviour
             StartCoroutine(BiggerRim());
         }
     }
+    
 }

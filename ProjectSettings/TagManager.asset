@@ -6,10 +6,12 @@ TagManager:
   tags:
   - BallGrab
   - Ball
-  - ScoredBall
   - SlowArea
   - MissedBall
-  - ThrownBall
+  - FirstThrownBall
+  - SecondThrownBall
+  - FirstScoredBall
+  - SecondScoredBall
   layers:
   - Default
   - TransparentFX

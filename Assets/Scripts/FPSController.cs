@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class FPSController : MonoBehaviour
@@ -30,7 +31,12 @@ public class FPSController : MonoBehaviour
 
     private Rigidbody rb;
     private bool closed = true;
-    private bool hasball = false;
+    public bool hasball = false;
+    private bool pressed;
+
+    GameManager gameManager;
+
+
     void Start()
     {
         rb = GetComponent<Rigidbody>();
@@ -46,6 +52,9 @@ public class FPSController : MonoBehaviour
 
         
         yRotation = -90f;
+
+        gameManager = FindObjectOfType<GameManager>();
+
         Invoke(nameof(enableLook), 0.5f);
     }
 
@@ -59,18 +68,39 @@ public class FPSController : MonoBehaviour
         {
             LookAround();
         }
-        if (!hasball)
+        if (!hasball && currentBall == null)
         {
             Move();
         }
         
+            
+        
+        
         Jump();
-        if (currentBall != null)
+
+
+        if (currentBall != null && hasball)
+        {
             ThrowBall();
+        }
+
         if (currentBall != null && hasball)
         {
             currentBall.transform.position = ballPosition.transform.position;
             currentBall.transform.rotation = ballPosition.transform.rotation;
+        }
+        if (Input.GetKeyDown(KeyCode.F) )
+        {
+            if (!pressed)
+            {
+                strongthrowForce = 12.5f;
+                pressed = !pressed;
+            }
+            else
+            {
+                strongthrowForce = 15f;
+                pressed = !pressed;
+            }
         }
     }
 
@@ -134,7 +164,7 @@ public class FPSController : MonoBehaviour
 
     private void ThrowBall()
     {
-        if (currentBall != null && Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(0))
         {
             Rigidbody Ballrb = currentBall.GetComponent<Rigidbody>();
             Ballrb.isKinematic = false;
@@ -143,24 +173,31 @@ public class FPSController : MonoBehaviour
             Ballrb.WakeUp();
 
             Vector3 throwDirection = playerCamera.forward;
-            if (IsGrounded())
-            {
-                 currentthrowForce = throwForce;
-            }
-            else
-                 currentthrowForce = strongthrowForce;
+            currentthrowForce = IsGrounded() ? throwForce : strongthrowForce;
+
             Ballrb.AddForce(throwDirection * currentthrowForce, ForceMode.Impulse);
             Ballrb.AddTorque(Random.insideUnitSphere * 5f, ForceMode.Impulse);
-            currentBall.tag = "ThrownBall";
+            
 
-            currentBall = null; // Done throwing
             hasball = false;
+            if (gameManager.again)
+            {
+                currentBall.tag = "SecondThrownBall";
+                currentBall = null;
+                gameManager.again = false; // Second attempt done
+                
+            }
+            else
+            {
+                currentBall.tag = "FirstThrownBall";
+                
+            }
             
         }
     }
 
-    
-        
+
+
     private void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.CompareTag ("BallGrab"))

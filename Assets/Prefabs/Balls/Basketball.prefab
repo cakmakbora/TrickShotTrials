@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6774395583512482478}
   - component: {fileID: 4593678947062517698}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Grabzone
   m_TagString: BallGrab
   m_Icon: {fileID: 0}
@@ -67,7 +67,7 @@ GameObject:
   - component: {fileID: 2041077162327874270}
   - component: {fileID: 3115060648213376909}
   - component: {fileID: 5770899187060207416}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Basketball
   m_TagString: Ball
   m_Icon: {fileID: 0}
