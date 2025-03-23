@@ -29,41 +29,47 @@ public class MissArea : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (collision.gameObject.CompareTag("FirstThrownBall"))
+        if (gameManager.gameRunning)
         {
-            
-            if (collision.transform.position.y > transform.position.y)
+            if (collision.gameObject.CompareTag("FirstThrownBall"))
             {
-                Ball ballScript = collision.gameObject.GetComponent<Ball>();
-                type = ballScript.ballType;
-                gameManager.Miss(type,true);
-                collision.gameObject.tag = "MissedBall";
-                
-                gameManager.again = true;
-            }
-            StartCoroutine(DestroyBall(collision.gameObject));
-        }
-        if (collision.gameObject.CompareTag("SecondThrownBall"))
-        {
 
-            if (collision.transform.position.y > transform.position.y)
+                if (collision.transform.position.y > transform.position.y)
+                {
+                    Ball ballScript = collision.gameObject.GetComponent<Ball>();
+                    type = ballScript.ballType;
+                    gameManager.Miss(type, true);
+                    collision.gameObject.tag = "MissedBall";
+
+                    gameManager.again = true;
+                }
+                StartCoroutine(DestroyBall(collision.gameObject));
+            }
+            if (collision.gameObject.CompareTag("SecondThrownBall"))
             {
-                Ball ballScript = collision.gameObject.GetComponent<Ball>();
-                type = ballScript.ballType;
-                gameManager.Miss(type,false);
-                collision.gameObject.tag = "MissedBall";
-                gameManager.again = false;
 
+                if (collision.transform.position.y > transform.position.y)
+                {
+                    Ball ballScript = collision.gameObject.GetComponent<Ball>();
+                    type = ballScript.ballType;
+                    gameManager.Miss(type, false);
+
+
+                    collision.gameObject.tag = "MissedBall";
+                    gameManager.again = false;
+
+                }
+                StartCoroutine(DestroyBallnGenerate(collision.gameObject));
             }
-            StartCoroutine(DestroyBallnGenerate(collision.gameObject));
+            if (collision.gameObject.CompareTag("FirstScoredBall") || collision.gameObject.CompareTag("SecondScoredBall"))
+            {
+                collision.gameObject.tag = "Ball";
+
+                StartCoroutine(DestroyBallnGenerate(collision.gameObject));
+            }
         }
-        if (collision.gameObject.CompareTag("FirstScoredBall") || collision.gameObject.CompareTag("SecondScoredBall"))
-        {
-            collision.gameObject.tag = "Ball";
-            
-            StartCoroutine(DestroyBallnGenerate(collision.gameObject));
-        }
-       
+
+
 
 
 

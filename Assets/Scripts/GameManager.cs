@@ -1,6 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
@@ -17,6 +20,11 @@ public class GameManager : MonoBehaviour
     
     public bool again = false;
 
+    public float currentTime = 60f;
+    public TextMeshProUGUI timerText;
+    public bool gameRunning = true;
+
+
     public GameObject normalBall;
     public GameObject bouncyBall;
     public GameObject heavyBall;
@@ -26,6 +34,9 @@ public class GameManager : MonoBehaviour
     public GameObject heavyBall1;
 
     public FPSController FPcontroller;
+    public GameObject Player;
+
+    public GameObject LoseScreen;
 
     public enum BallType
     {
@@ -107,12 +118,13 @@ public class GameManager : MonoBehaviour
     }
     public void AddScore(int points,BallType type)
     {
-        currentscore += points;
+        currentscore ++;
         if (type == BallType.Normal)
         {
             hitcounter++;
         }
         scoresinarow++;
+        currentTime += points;
         
         Debug.Log("Scored! +" + points + " points. Total Score: " + currentscore);
     }
@@ -124,8 +136,11 @@ public class GameManager : MonoBehaviour
             if (type == BallType.Normal)
             {
                 misscounter++;
-                scoresinarow = 0; // Reset streak if missed
+                
             }
+            if (type == BallType.Heavy)
+                currentTime -= 10;
+            scoresinarow = 0; // Reset streak if missed
         }
         
         
@@ -147,10 +162,43 @@ public class GameManager : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.E) && !oncooldown)
+        
+        if (gameRunning)
         {
-            StartCoroutine(BiggerRim());
+            if (Input.GetKeyDown(KeyCode.E) && !oncooldown)
+            {
+                StartCoroutine(BiggerRim());
+            }
+            currentTime -= Time.deltaTime;
+            currentTime = Mathf.Max(currentTime, 0f); // clamp at 0
+            UpdateTimerUI();
+
+            if (currentTime <= 0f)
+            {
+                EndGame();
+            }
         }
     }
-    
+    private void UpdateTimerUI()
+    {
+        int seconds = Mathf.FloorToInt(currentTime);
+        timerText.text = "Time: " + seconds.ToString();
+    }
+
+    private void EndGame()
+    {
+        gameRunning = false;
+        LoseScreen.SetActive(true);
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+        Player.GetComponent<Rigidbody>().velocity = Vector3.zero;  
+        Debug.Log("Game Over! Final Score: " + currentscore);
+        // You can show a UI panel here or load an end scene
+    }
+    public void RestartGame()
+    {
+
+        SceneManager.LoadScene(0);
+    }
+
 }

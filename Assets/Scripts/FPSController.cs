@@ -64,44 +64,50 @@ public class FPSController : MonoBehaviour
     }
     void Update()
     {
-        if (!closed)
+        if (gameManager.gameRunning)
         {
-            LookAround();
-        }
-        if (!hasball && currentBall == null)
-        {
-            Move();
-        }
-        
-            
-        
-        
-        Jump();
-
-
-        if (currentBall != null && hasball)
-        {
-            ThrowBall();
-        }
-
-        if (currentBall != null && hasball)
-        {
-            currentBall.transform.position = ballPosition.transform.position;
-            currentBall.transform.rotation = ballPosition.transform.rotation;
-        }
-        if (Input.GetKeyDown(KeyCode.F) )
-        {
-            if (!pressed)
+            if (!closed)
             {
-                strongthrowForce = 12.5f;
-                pressed = !pressed;
+                LookAround();
             }
-            else
+            if (!hasball && currentBall == null)
             {
-                strongthrowForce = 15f;
-                pressed = !pressed;
+                Move();
+            }
+
+            Jump();
+
+            if (currentBall != null)
+            {
+                Vector3 vel = rb.velocity;
+                rb.velocity = new Vector3(0, vel.y, 0);
+            }
+
+            if (currentBall != null && hasball)
+            {
+                ThrowBall();
+            }
+
+            if (currentBall != null && hasball)
+            {
+                currentBall.transform.position = ballPosition.transform.position;
+                currentBall.transform.rotation = ballPosition.transform.rotation;
+            }
+            if (Input.GetKeyDown(KeyCode.F))
+            {
+                if (!pressed)
+                {
+                    strongthrowForce = 12.5f;
+                    pressed = !pressed;
+                }
+                else
+                {
+                    strongthrowForce = 15f;
+                    pressed = !pressed;
+                }
             }
         }
+        
     }
 
     private void LookAround()

@@ -13,13 +13,13 @@ public class Ball : MonoBehaviour
         switch (ballType)
         {
             case GameManager.BallType.Normal:
-                ballValue = 1;
+                ballValue = 5;
                 break;
             case GameManager.BallType.Bouncy:
-                ballValue = 2;
+                ballValue = 15;
                 break;
             case GameManager.BallType.Heavy:
-                ballValue = 3;
+                ballValue = 10;
                 break;
         }
     }
