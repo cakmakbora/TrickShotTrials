@@ -36,6 +36,7 @@ public class GameManager : MonoBehaviour
 
     public FPSController FPcontroller;
     public GameObject Player;
+    public Sunshine Sunshine;
 
     public GameObject LoseScreen;
     public TextMeshProUGUI FinalPointsText;
@@ -241,6 +242,7 @@ public class GameManager : MonoBehaviour
         UI.enabled = false;
         FinalPointsText.text = currentscore.ToString ();
         LoseScreen.SetActive(true);
+        Sunshine.currentMusic.Stop();
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
         Player.GetComponent<Rigidbody>().velocity = Vector3.zero;  
@@ -266,6 +268,11 @@ public class GameManager : MonoBehaviour
         MinusPoints.SetActive(true);
         yield return new WaitForSeconds(1) ;
         MinusPoints.SetActive(false);
+    }
+
+    public void CloseGame()
+    {
+        Application.Quit();
     }
 
 }

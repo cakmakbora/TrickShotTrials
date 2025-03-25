@@ -38,6 +38,8 @@ public class FPSController : MonoBehaviour
 
     GameManager gameManager;
 
+    public Sunshine Sunshine;
+
     public Image Throwfill;
 
     void Start()
@@ -69,7 +71,7 @@ public class FPSController : MonoBehaviour
     {
         if (gameManager.gameRunning)
         {
-            if (!closed)
+            if (!closed && !Sunshine.inUsage)
             {
                 LookAround();
             }
