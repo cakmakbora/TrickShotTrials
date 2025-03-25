@@ -16,10 +16,10 @@ public class Ball : MonoBehaviour
                 ballValue = 5;
                 break;
             case GameManager.BallType.Bouncy:
-                ballValue = 15;
+                ballValue = 10;
                 break;
             case GameManager.BallType.Heavy:
-                ballValue = 10;
+                ballValue = 7;
                 break;
         }
     }

@@ -180,7 +180,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ballType: 1
-  ballValue: 15
+  ballValue: 10
 --- !u!135 &4473807321039525586
 SphereCollider:
   m_ObjectHideFlags: 0

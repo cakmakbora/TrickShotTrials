@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UI;
+
 
 public class FPSController : MonoBehaviour
 {
@@ -20,8 +22,8 @@ public class FPSController : MonoBehaviour
     private float yRotation = 0f;
 
     [Header("Throw Settings")]
-    public float throwForce = 10f;
-    public float strongthrowForce = 15f;
+    public float throwForce = 8.5f;
+    public float strongthrowForce = 12.5f;
     private float currentthrowForce;
 
     [Header("Others")]
@@ -30,12 +32,13 @@ public class FPSController : MonoBehaviour
     public GameObject currentBall;
 
     private Rigidbody rb;
-    private bool closed = true;
+    public bool closed = true;
     public bool hasball = false;
     private bool pressed;
 
     GameManager gameManager;
 
+    public Image Throwfill;
 
     void Start()
     {
@@ -97,12 +100,16 @@ public class FPSController : MonoBehaviour
             {
                 if (!pressed)
                 {
-                    strongthrowForce = 12.5f;
+                    strongthrowForce = 15f;
+                    throwForce = 10f;
+                    Throwfill.gameObject.SetActive(true);
                     pressed = !pressed;
                 }
                 else
                 {
-                    strongthrowForce = 15f;
+                    strongthrowForce = 12.5f;
+                    throwForce = 8.5f;
+                    Throwfill.gameObject.SetActive(false);
                     pressed = !pressed;
                 }
             }
@@ -165,7 +172,9 @@ public class FPSController : MonoBehaviour
         currentBall = Ball;
         hasball = true;
         gameObject.GetComponent<Rigidbody>().velocity = Vector3.zero;
-        
+
+        SetBallTransparency(currentBall, 0.4f);
+
     }
 
     private void ThrowBall()
@@ -183,7 +192,8 @@ public class FPSController : MonoBehaviour
 
             Ballrb.AddForce(throwDirection * currentthrowForce, ForceMode.Impulse);
             Ballrb.AddTorque(Random.insideUnitSphere * 5f, ForceMode.Impulse);
-            
+            SetBallTransparency(currentBall, 1f);
+
 
             hasball = false;
             if (gameManager.again)
@@ -214,5 +224,28 @@ public class FPSController : MonoBehaviour
             
         }
         
+    }
+
+
+    public void SetBallTransparency(GameObject ball, float alpha)
+    {
+        MeshRenderer meshRenderer = ball.GetComponent<MeshRenderer>();
+        if (meshRenderer != null)
+        {
+            foreach (var mat in meshRenderer.materials)
+            {
+                Color color = mat.color;
+                color.a = alpha;
+                mat.color = color;
+               /* mat.SetFloat("_Mode", 2); // Optional: make sure it’s in Fade mode
+                mat.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
+                mat.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
+                mat.SetInt("_ZWrite", 0);
+                mat.DisableKeyword("_ALPHATEST_ON");
+                mat.EnableKeyword("_ALPHABLEND_ON");
+                mat.DisableKeyword("_ALPHAPREMULTIPLY_ON");
+                mat.renderQueue = 3000; */
+            }
+        }
     }
 }

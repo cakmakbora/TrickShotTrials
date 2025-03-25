@@ -23,6 +23,7 @@ public class GameManager : MonoBehaviour
     public float currentTime = 60f;
     public TextMeshProUGUI timerText;
     public bool gameRunning = true;
+    public Canvas UI;
 
 
     public GameObject normalBall;
@@ -37,6 +38,17 @@ public class GameManager : MonoBehaviour
     public GameObject Player;
 
     public GameObject LoseScreen;
+    public TextMeshProUGUI FinalPointsText;
+    public GameObject PlusPoints;
+    public GameObject MinusPoints;
+    public TextMeshProUGUI PlusPointsText;
+    public TextMeshProUGUI MinusPointsText;
+
+    public GameObject ScoreTable;
+
+    public float abilitytimer = 10f;
+    public Image abilityfill;
+    public Image abilityhighlight;
 
     public enum BallType
     {
@@ -68,6 +80,7 @@ public class GameManager : MonoBehaviour
                 spawnedBall.GetComponent<Rigidbody>().isKinematic = true;
                 FPcontroller.currentBall = spawnedBall;
                 FPcontroller.hasball = true;
+                FPcontroller.SetBallTransparency(spawnedBall, 0.4f);
                 return spawnedBall;
             }
         }
@@ -119,12 +132,14 @@ public class GameManager : MonoBehaviour
     public void AddScore(int points,BallType type)
     {
         currentscore ++;
+        ScoreTable.GetComponent<TextMeshPro>().text = currentscore.ToString();
         if (type == BallType.Normal)
         {
             hitcounter++;
         }
         scoresinarow++;
         currentTime += points;
+        StartCoroutine(ShowPositiveScore(points));
         
         Debug.Log("Scored! +" + points + " points. Total Score: " + currentscore);
     }
@@ -139,7 +154,12 @@ public class GameManager : MonoBehaviour
                 
             }
             if (type == BallType.Heavy)
+            {
                 currentTime -= 10;
+                StartCoroutine(ShowNegativeScore(10));
+            }
+                
+                
             scoresinarow = 0; // Reset streak if missed
         }
         
@@ -150,14 +170,40 @@ public class GameManager : MonoBehaviour
 
     IEnumerator BiggerRim()
     {
+        //float normalizedvalue;
+        abilityhighlight.enabled = false;
+        float endTime = 3f;
+
+        abilitytimer = 0;
+        
+        abilityfill.fillAmount = 0;
         oncooldown = true;
         Pota.SetActive(false);
         BuyukPota.SetActive(true);
-        yield return new WaitForSeconds(3);
+
+        while (abilitytimer < endTime)
+        {
+            abilitytimer += Time.deltaTime;
+            abilityfill.fillAmount = abilitytimer / 10f;
+            yield return null;
+        }
+
         Pota.SetActive(true);
         BuyukPota.SetActive(false);
-        yield return new WaitForSeconds(7);
+
+        
+        endTime = 10f;
+
+        while (abilitytimer < endTime)
+        {
+            abilitytimer += Time.deltaTime;
+            abilityfill.fillAmount = abilitytimer / 10f;
+            yield return null;
+        }
+
+        abilityhighlight.enabled = true;
         oncooldown = false;
+        
     }
 
     void Update()
@@ -169,9 +215,13 @@ public class GameManager : MonoBehaviour
             {
                 StartCoroutine(BiggerRim());
             }
-            currentTime -= Time.deltaTime;
-            currentTime = Mathf.Max(currentTime, 0f); // clamp at 0
-            UpdateTimerUI();
+            if (!FPcontroller.closed)
+            {
+                currentTime -= Time.deltaTime;
+                currentTime = Mathf.Max(currentTime, 0f); // clamp at 0
+                UpdateTimerUI();
+            }
+            
 
             if (currentTime <= 0f)
             {
@@ -182,12 +232,14 @@ public class GameManager : MonoBehaviour
     private void UpdateTimerUI()
     {
         int seconds = Mathf.FloorToInt(currentTime);
-        timerText.text = "Time: " + seconds.ToString();
+        timerText.text = /*"Time: " +*/ seconds.ToString();
     }
 
     private void EndGame()
     {
         gameRunning = false;
+        UI.enabled = false;
+        FinalPointsText.text = currentscore.ToString ();
         LoseScreen.SetActive(true);
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
@@ -199,6 +251,21 @@ public class GameManager : MonoBehaviour
     {
 
         SceneManager.LoadScene(0);
+    }
+
+    private IEnumerator ShowPositiveScore(int score)
+    {
+        PlusPointsText.text = "+ " + score.ToString();
+        PlusPoints.SetActive(true);
+        yield return new WaitForSeconds(1);
+        PlusPoints.SetActive(false);
+    }
+    private IEnumerator ShowNegativeScore(int score)
+    {
+        MinusPointsText.text = "- " + score.ToString();
+        MinusPoints.SetActive(true);
+        yield return new WaitForSeconds(1) ;
+        MinusPoints.SetActive(false);
     }
 
 }
