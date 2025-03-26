@@ -242,7 +242,8 @@ public class GameManager : MonoBehaviour
         UI.enabled = false;
         FinalPointsText.text = currentscore.ToString ();
         LoseScreen.SetActive(true);
-        Sunshine.currentMusic.Stop();
+        if (Sunshine.currentMusic != null)
+            Sunshine.currentMusic.Stop();
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
         Player.GetComponent<Rigidbody>().velocity = Vector3.zero;  
