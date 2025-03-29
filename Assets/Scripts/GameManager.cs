@@ -51,6 +51,8 @@ public class GameManager : MonoBehaviour
     public Image abilityfill;
     public Image abilityhighlight;
 
+    
+
     public enum BallType
     {
         Normal,
@@ -140,6 +142,8 @@ public class GameManager : MonoBehaviour
         }
         scoresinarow++;
         currentTime += points;
+        PlusPoints.SetActive(false);
+        MinusPoints.SetActive(false);
         StartCoroutine(ShowPositiveScore(points));
         
         Debug.Log("Scored! +" + points + " points. Total Score: " + currentscore);
@@ -157,6 +161,8 @@ public class GameManager : MonoBehaviour
             if (type == BallType.Heavy)
             {
                 currentTime -= 10;
+                PlusPoints.SetActive(false);
+                MinusPoints.SetActive(false);
                 StartCoroutine(ShowNegativeScore(10));
             }
                 
@@ -171,6 +177,11 @@ public class GameManager : MonoBehaviour
 
     IEnumerator BiggerRim()
     {
+        currentTime -= 5;
+
+        PlusPoints.SetActive(false);
+        MinusPoints.SetActive(false);
+        StartCoroutine(ShowNegativeScore(5));
         //float normalizedvalue;
         abilityhighlight.enabled = false;
         float endTime = 3f;
@@ -244,6 +255,7 @@ public class GameManager : MonoBehaviour
         LoseScreen.SetActive(true);
         if (Sunshine.currentMusic != null)
             Sunshine.currentMusic.Stop();
+        Sunshine.mainMusic.Stop();
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
         Player.GetComponent<Rigidbody>().velocity = Vector3.zero;  

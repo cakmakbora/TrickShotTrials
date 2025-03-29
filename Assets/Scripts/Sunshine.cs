@@ -8,9 +8,11 @@ public class Sunshine : MonoBehaviour
 {
     public Transform cameraTransform; // Camera Transform
     public AudioSource currentMusic;
+    public AudioSource mainMusic;
     public GameObject musicObject;
     public bool inUsage = false;
     public GameManager gameManager;
+    public bool isPlaying = false;
     
 
     private Quaternion targetRotation;
@@ -19,6 +21,11 @@ public class Sunshine : MonoBehaviour
     {
         if (gameManager.gameRunning)
         {
+            if (!isPlaying)
+            {
+                StartCoroutine(PlayMusic());
+            }
+            
             if (Input.GetKeyDown(KeyCode.Q))
             {
                 inUsage = true;
@@ -30,6 +37,7 @@ public class Sunshine : MonoBehaviour
 
 
                 currentMusic = musicObject.GetComponent<AudioSource>();
+                mainMusic.Stop();
                 currentMusic.Play();
             }
 
@@ -39,6 +47,7 @@ public class Sunshine : MonoBehaviour
                 // Reset camera rotation to original state (x=0, y=0, z=0)
                 cameraTransform.rotation = Quaternion.Euler(0, 0, 0);
                 currentMusic.Stop();
+                isPlaying = false;
                 currentMusic = null;
             }
 
@@ -47,6 +56,20 @@ public class Sunshine : MonoBehaviour
                 cameraTransform.rotation = Quaternion.Lerp(cameraTransform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
             }
         }
+        
+    }
+    IEnumerator PlayMusic()
+    {
+        
+        isPlaying = true;
+        
+        mainMusic.Play();
+
+        yield return new WaitForSeconds(mainMusic.clip.length);
+        isPlaying = false;
+
+        
+            
         
     }
 }
