@@ -2,19 +2,22 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
-
+using UnityEngine.UI;
 
 public class Sunshine : MonoBehaviour
 {
-    public Transform cameraTransform; // Camera Transform
+    public Transform cameraTransform;
     public AudioSource currentMusic;
     public AudioSource mainMusic;
     public GameObject musicObject;
     public bool inUsage = false;
     public GameManager gameManager;
     public bool isPlaying = false;
-    
+    public static float currentvolume;
 
+    public Slider VolumeSlider;
+
+    public static bool restarted = false;
     private Quaternion targetRotation;
     private float rotationSpeed = 3f;
     void Update()
@@ -58,12 +61,25 @@ public class Sunshine : MonoBehaviour
         }
         
     }
+    void Start()
+    {
+        if (!restarted)
+        {
+            currentvolume = Menu.currentvalue;
+            
+            
+        }
+        VolumeSlider.value = currentvolume;
+        restarted = false;
+
+    }
     IEnumerator PlayMusic()
     {
         
         isPlaying = true;
         
         mainMusic.Play();
+        mainMusic.volume = currentvolume;
 
         yield return new WaitForSeconds(mainMusic.clip.length);
         isPlaying = false;
@@ -71,5 +87,11 @@ public class Sunshine : MonoBehaviour
         
             
         
+    }
+
+    public void VolumeChanged()
+    {
+        currentvolume = VolumeSlider.value;
+        mainMusic.volume = currentvolume;
     }
 }

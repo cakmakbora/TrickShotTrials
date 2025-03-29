@@ -67,8 +67,8 @@ public class MissArea : MonoBehaviour
 
                 StartCoroutine(DestroyBallnGenerate(collision.gameObject));
             }
-        }
 
+        }
 
 
 

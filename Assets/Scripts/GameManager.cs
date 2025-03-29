@@ -24,6 +24,7 @@ public class GameManager : MonoBehaviour
     public TextMeshProUGUI timerText;
     public bool gameRunning = true;
     public Canvas UI;
+    public GameObject ESC;
 
 
     public GameObject normalBall;
@@ -52,6 +53,13 @@ public class GameManager : MonoBehaviour
     public Image abilityhighlight;
 
     private bool secondstage = false;
+    public static bool firsttime = true;
+    public bool escmenuactive = false;
+
+
+    public GameObject Panel;
+    public GameObject SettingsPanel;
+    
 
     public enum BallType
     {
@@ -189,7 +197,7 @@ public class GameManager : MonoBehaviour
         PlusPoints.SetActive(false);
         MinusPoints.SetActive(false);
         StartCoroutine(ShowNegativeScore(5));
-        //float normalizedvalue;
+        
         abilityhighlight.enabled = false;
         float endTime = 3f;
 
@@ -230,39 +238,51 @@ public class GameManager : MonoBehaviour
         
         if (gameRunning)
         {
-            if (Input.GetKeyDown(KeyCode.E) && !oncooldown)
-            {
-                StartCoroutine(BiggerRim());
-            }
             if (!FPcontroller.closed)
             {
                 float timeReduction = secondstage ? Time.deltaTime * 2 : Time.deltaTime;
-                currentTime = Mathf.Max(currentTime - timeReduction, 0f); 
+                currentTime = Mathf.Max(currentTime - timeReduction, 0f);
                 UpdateTimerUI();
             }
-
-
             if (currentTime <= 0f)
             {
                 EndGame();
             }
+            if (!escmenuactive)
+            {
+                if (Input.GetKeyDown(KeyCode.E) && !oncooldown)
+                {
+                    StartCoroutine(BiggerRim());
+                }
+            }
+            if (Input.GetKeyDown(KeyCode.Escape))
+            {
+                EscMenu();
+            }
+
         }
+        
     }
 
     void Start()
     {
+        DynamicGI.UpdateEnvironment();
         Invoke(nameof(OneMinutePassed), 60f);
+        
+
     }
     private void UpdateTimerUI()
     {
         int seconds = Mathf.FloorToInt(currentTime);
-        timerText.text = /*"Time: " +*/ seconds.ToString();
+        timerText.text = seconds.ToString();
     }
 
     private void EndGame()
     {
         gameRunning = false;
         UI.enabled = false;
+        ESC.SetActive(false);
+        escmenuactive = false;
         FinalPointsText.text = currentscore.ToString ();
         LoseScreen.SetActive(true);
         if (Sunshine.currentMusic != null)
@@ -272,12 +292,31 @@ public class GameManager : MonoBehaviour
         Cursor.visible = true;
         Player.GetComponent<Rigidbody>().velocity = Vector3.zero;  
         Debug.Log("Game Over! Final Score: " + currentscore);
-        // You can show a UI panel here or load an end scene
+        
+    }
+    private void EscMenu()
+    {
+        
+        
+        ESC.SetActive(!ESC.activeSelf);
+        
+        escmenuactive = !escmenuactive;
+        Cursor.lockState = Cursor.lockState == CursorLockMode.Locked ? CursorLockMode.None : CursorLockMode.Locked;
+        Cursor.visible = !Cursor.visible;
+        Player.GetComponent<Rigidbody>().velocity = Vector3.zero;
+        if (ESC.activeSelf == false)
+        {
+            SettingsPanel.SetActive(false);
+            Panel.SetActive(true);
+        }
+        
+
     }
     public void RestartGame()
     {
+        Sunshine.restarted = true;
+        SceneManager.LoadScene(1);
 
-        SceneManager.LoadScene(0);
     }
 
     private IEnumerator ShowPositiveScore(int score)
@@ -297,13 +336,33 @@ public class GameManager : MonoBehaviour
 
     public void CloseGame()
     {
-        Application.Quit();
+        firsttime = false;
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+        SceneManager.LoadScene(0);
+        
     }
     private void OneMinutePassed()
     {
         
         secondstage = true;
         
+    }
+
+    public void OpenSettings()
+    {
+        Panel.SetActive(false);
+        SettingsPanel.SetActive(true);
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+    }
+    public void BackfromSettings()
+    {
+        SettingsPanel.SetActive(false);
+        Panel.SetActive(true);
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+
     }
 
 }

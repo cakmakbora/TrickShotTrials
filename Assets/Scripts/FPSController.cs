@@ -48,7 +48,7 @@ public class FPSController : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
 
-        // The player’s rotation starts at y = -90
+        
         transform.rotation = Quaternion.Euler(0f, -90f, 0f);
 
         
@@ -71,16 +71,16 @@ public class FPSController : MonoBehaviour
     {
         if (gameManager.gameRunning)
         {
-            if (!closed && !Sunshine.inUsage)
+            if (!closed && !Sunshine.inUsage && !gameManager.escmenuactive)
             {
                 LookAround();
             }
-            if (!hasball && currentBall == null)
+            if (!hasball && currentBall == null && !gameManager.escmenuactive)
             {
                 Move();
             }
-
-            Jump();
+            if (!gameManager.escmenuactive)
+                Jump();
 
             if (currentBall != null)
             {
@@ -88,7 +88,7 @@ public class FPSController : MonoBehaviour
                 rb.velocity = new Vector3(0, vel.y, 0);
             }
 
-            if (currentBall != null && hasball)
+            if (currentBall != null && hasball && !gameManager.escmenuactive)
             {
                 ThrowBall();
             }
@@ -98,7 +98,7 @@ public class FPSController : MonoBehaviour
                 currentBall.transform.position = ballPosition.transform.position;
                 currentBall.transform.rotation = ballPosition.transform.rotation;
             }
-            if (Input.GetKeyDown(KeyCode.F))
+            if (Input.GetKeyDown(KeyCode.F) && !gameManager.escmenuactive)
             {
                 if (!pressed)
                 {

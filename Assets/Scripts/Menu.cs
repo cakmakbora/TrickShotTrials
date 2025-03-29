@@ -9,9 +9,15 @@ public class Menu : MonoBehaviour
     public GameObject StartScreen, SettingsScreen;
     public GameObject Audio;
     public AudioSource bgsound;
-    public Slider VolumeSlider; 
+    public Slider VolumeSlider;
+    public static float currentvalue = .5f;
 void Start()
     {
+        if (GameManager.firsttime == false)
+        {
+            currentvalue = Sunshine.currentvolume;
+            VolumeSlider.value = currentvalue;
+        }
         StartScreen.SetActive(true);
         SettingsScreen.SetActive(false);
         bgsound = Audio.GetComponent<AudioSource>();
@@ -19,6 +25,7 @@ void Start()
         if (VolumeSlider != null && bgsound != null)
         {
             bgsound.volume = VolumeSlider.value;
+            currentvalue = VolumeSlider.value;
         }
     }
     public void OpenSettings()
@@ -38,10 +45,17 @@ void Start()
         if (bgsound != null)
         {
             bgsound.volume = VolumeSlider.value;
+            currentvalue = VolumeSlider.value;
         }
     }
     public void ChangeScene()
     {
-        SceneManager.LoadScene("Game");
+        SceneManager.LoadScene(1);
     }
+
+    public void QuitGame()
+    {
+        Application.Quit();
+    }
+    
 }
