@@ -51,7 +51,7 @@ public class GameManager : MonoBehaviour
     public Image abilityfill;
     public Image abilityhighlight;
 
-    
+    private bool secondstage = false;
 
     public enum BallType
     {
@@ -165,6 +165,13 @@ public class GameManager : MonoBehaviour
                 MinusPoints.SetActive(false);
                 StartCoroutine(ShowNegativeScore(10));
             }
+            /*else if (type == BallType.Bouncy || type == BallType.Normal)
+            {
+                currentTime -= 5;
+                PlusPoints.SetActive(false);
+                MinusPoints.SetActive(false);
+                StartCoroutine(ShowNegativeScore(5));
+            }*/
                 
                 
             scoresinarow = 0; // Reset streak if missed
@@ -229,17 +236,22 @@ public class GameManager : MonoBehaviour
             }
             if (!FPcontroller.closed)
             {
-                currentTime -= Time.deltaTime;
-                currentTime = Mathf.Max(currentTime, 0f); // clamp at 0
+                float timeReduction = secondstage ? Time.deltaTime * 2 : Time.deltaTime;
+                currentTime = Mathf.Max(currentTime - timeReduction, 0f); 
                 UpdateTimerUI();
             }
-            
+
 
             if (currentTime <= 0f)
             {
                 EndGame();
             }
         }
+    }
+
+    void Start()
+    {
+        Invoke(nameof(OneMinutePassed), 60f);
     }
     private void UpdateTimerUI()
     {
@@ -286,6 +298,12 @@ public class GameManager : MonoBehaviour
     public void CloseGame()
     {
         Application.Quit();
+    }
+    private void OneMinutePassed()
+    {
+        
+        secondstage = true;
+        
     }
 
 }
