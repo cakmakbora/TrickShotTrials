@@ -46,12 +46,19 @@ public class Sunshine : MonoBehaviour
                 }
                 if (Input.GetKeyUp(KeyCode.Q))
                 {
-                    inUsage = false;
+                    
                     // Reset camera rotation to original state (x=0, y=0, z=0)
-                    cameraTransform.rotation = Quaternion.Euler(0, 0, 0);
-                    currentMusic.Stop();
-                    isPlaying = false;
-                    currentMusic = null;
+                    
+                    if (currentMusic != null && inUsage)
+                    {
+                        //cameraTransform.rotation = Quaternion.Euler(0, 0, 0);
+                        currentMusic.Stop();
+                        isPlaying = false;
+                        inUsage = false;
+
+                        currentMusic = null;
+                    }
+                    
                 }
                 if (inUsage)
                 {
@@ -59,17 +66,18 @@ public class Sunshine : MonoBehaviour
                 }
 
             }
-            else
+            else if (GameManager.escmenuactive && currentMusic != null && inUsage)
             {
-                inUsage = false;
+ 
                 
-                
-                if (currentMusic != null){
-                    currentMusic.Stop();
-                }
-                
-                isPlaying = false;
+                currentMusic.Stop();
                 currentMusic = null;
+                inUsage = false;
+
+                isPlaying = false;
+                
+                
+                
             }
             
 

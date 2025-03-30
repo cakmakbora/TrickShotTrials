@@ -325,6 +325,7 @@ public class GameManager : MonoBehaviour
     public void RestartGame()
     {
         Time.timeScale = 1f;
+        escmenuactive = false;
         Sunshine.restarted = true;
         SceneManager.LoadScene(1);
 
@@ -349,6 +350,7 @@ public class GameManager : MonoBehaviour
     {
         Time.timeScale = 1f;
         firsttime = false;
+        escmenuactive = false;
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
         SceneManager.LoadScene(0);
