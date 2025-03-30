@@ -71,15 +71,15 @@ public class FPSController : MonoBehaviour
     {
         if (gameManager.gameRunning)
         {
-            if (!closed && !Sunshine.inUsage && !gameManager.escmenuactive)
+            if (!closed && !Sunshine.inUsage && !GameManager.escmenuactive)
             {
                 LookAround();
             }
-            if (!hasball && currentBall == null && !gameManager.escmenuactive)
+            if (!hasball && currentBall == null && !GameManager.escmenuactive)
             {
                 Move();
             }
-            if (!gameManager.escmenuactive)
+            if (!GameManager.escmenuactive)
                 Jump();
 
             if (currentBall != null)
@@ -88,7 +88,7 @@ public class FPSController : MonoBehaviour
                 rb.velocity = new Vector3(0, vel.y, 0);
             }
 
-            if (currentBall != null && hasball && !gameManager.escmenuactive)
+            if (currentBall != null && hasball && !GameManager.escmenuactive)
             {
                 ThrowBall();
             }
@@ -98,7 +98,7 @@ public class FPSController : MonoBehaviour
                 currentBall.transform.position = ballPosition.transform.position;
                 currentBall.transform.rotation = ballPosition.transform.rotation;
             }
-            if (Input.GetKeyDown(KeyCode.F) && !gameManager.escmenuactive)
+            if (Input.GetKeyDown(KeyCode.F) && !GameManager.escmenuactive)
             {
                 if (!pressed)
                 {

@@ -54,11 +54,14 @@ public class GameManager : MonoBehaviour
 
     private bool secondstage = false;
     public static bool firsttime = true;
-    public bool escmenuactive = false;
+    public static bool escmenuactive = false;
 
 
     public GameObject Panel;
     public GameObject SettingsPanel;
+
+    public GameObject TwiceSpeedText;
+    public GameObject StreakText;
     
 
     public enum BallType
@@ -149,6 +152,11 @@ public class GameManager : MonoBehaviour
             hitcounter++;
         }
         scoresinarow++;
+        if (scoresinarow >= 3)
+        {
+            StreakText.GetComponent<TextMeshProUGUI>().text = "Streak x" + scoresinarow.ToString();
+            StreakText.SetActive(true);
+        }
         currentTime += points;
         PlusPoints.SetActive(false);
         MinusPoints.SetActive(false);
@@ -183,6 +191,7 @@ public class GameManager : MonoBehaviour
                 
                 
             scoresinarow = 0; // Reset streak if missed
+            StreakText.SetActive(false);
         }
         
         
@@ -279,6 +288,7 @@ public class GameManager : MonoBehaviour
 
     private void EndGame()
     {
+        Time.timeScale = 1f;
         gameRunning = false;
         UI.enabled = false;
         ESC.SetActive(false);
@@ -296,8 +306,8 @@ public class GameManager : MonoBehaviour
     }
     private void EscMenu()
     {
-        
-        
+
+        Time.timeScale = Time.timeScale == 0 ? 1 : 0;
         ESC.SetActive(!ESC.activeSelf);
         
         escmenuactive = !escmenuactive;
@@ -314,6 +324,7 @@ public class GameManager : MonoBehaviour
     }
     public void RestartGame()
     {
+        Time.timeScale = 1f;
         Sunshine.restarted = true;
         SceneManager.LoadScene(1);
 
@@ -336,6 +347,7 @@ public class GameManager : MonoBehaviour
 
     public void CloseGame()
     {
+        Time.timeScale = 1f;
         firsttime = false;
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
@@ -346,6 +358,7 @@ public class GameManager : MonoBehaviour
     {
         
         secondstage = true;
+        TwiceSpeedText.SetActive(true);
         
     }
 
