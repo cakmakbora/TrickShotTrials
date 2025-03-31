@@ -24,12 +24,8 @@ public class Sunshine : MonoBehaviour
     {
         if (gameManager.gameRunning)
         {
-            if (!isPlaying)
-            {
-                StartCoroutine(PlayMusic());
-            }
-            if (!GameManager.escmenuactive)
-            {
+            
+            
                 if (Input.GetKeyDown(KeyCode.Q))
                 {
                     inUsage = true;
@@ -44,48 +40,40 @@ public class Sunshine : MonoBehaviour
                     mainMusic.Stop();
                     currentMusic.Play();
                 }
-                if (Input.GetKeyUp(KeyCode.Q))
+                if (Input.GetKeyUp(KeyCode.Q) && currentMusic != null && inUsage)
                 {
-                    
-                    // Reset camera rotation to original state (x=0, y=0, z=0)
-                    
-                    if (currentMusic != null && inUsage)
-                    {
-                        //cameraTransform.rotation = Quaternion.Euler(0, 0, 0);
-                        currentMusic.Stop();
-                        isPlaying = false;
-                        inUsage = false;
+                
+                    currentMusic.Stop();
+                    isPlaying = false;
+                    inUsage = false;
 
-                        currentMusic = null;
-                    }
-                    
+                    currentMusic = null;
+                                       
                 }
                 if (inUsage)
                 {
                     cameraTransform.rotation = Quaternion.Lerp(cameraTransform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
                 }
-
-            }
-            else if (GameManager.escmenuactive && currentMusic != null && inUsage)
-            {
- 
-                
-                currentMusic.Stop();
-                currentMusic = null;
-                inUsage = false;
-
-                isPlaying = false;
-                
-                
-                
-            }
-            
-
-
-
-            
+                     
         }
-        
+        else if (!gameManager.gameRunning && currentMusic != null && inUsage)
+        {
+
+
+            currentMusic.Stop();
+            currentMusic = null;
+            inUsage = false;
+
+            isPlaying = false;
+
+
+
+        }
+        if (!isPlaying)
+        {
+            PlayMusic();
+        }
+
     }
     void Start()
     {
@@ -99,19 +87,13 @@ public class Sunshine : MonoBehaviour
         restarted = false;
 
     }
-    IEnumerator PlayMusic()
+    void PlayMusic()
     {
         
         isPlaying = true;
         
         mainMusic.Play();
         mainMusic.volume = currentvolume;
-
-        yield return new WaitForSeconds(mainMusic.clip.length);
-        isPlaying = false;
-
-        
-            
         
     }
 

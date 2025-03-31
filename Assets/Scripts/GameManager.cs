@@ -54,7 +54,7 @@ public class GameManager : MonoBehaviour
 
     private bool secondstage = false;
     public static bool firsttime = true;
-    public static bool escmenuactive = false;
+    
 
 
     public GameObject Panel;
@@ -257,20 +257,19 @@ public class GameManager : MonoBehaviour
             {
                 EndGame();
             }
-            if (!escmenuactive)
+            
+            if (Input.GetKeyDown(KeyCode.E) && !oncooldown)
             {
-                if (Input.GetKeyDown(KeyCode.E) && !oncooldown)
-                {
-                    StartCoroutine(BiggerRim());
-                }
+                StartCoroutine(BiggerRim());
             }
-            if (Input.GetKeyDown(KeyCode.Escape))
-            {
-                EscMenu();
-            }
+            
 
         }
-        
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            EscMenu();
+        }
+
     }
 
     void Start()
@@ -292,7 +291,6 @@ public class GameManager : MonoBehaviour
         gameRunning = false;
         UI.enabled = false;
         ESC.SetActive(false);
-        escmenuactive = false;
         FinalPointsText.text = currentscore.ToString ();
         LoseScreen.SetActive(true);
         if (Sunshine.currentMusic != null)
@@ -300,7 +298,8 @@ public class GameManager : MonoBehaviour
         Sunshine.mainMusic.Stop();
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
-        Player.GetComponent<Rigidbody>().velocity = Vector3.zero;  
+        Player.GetComponent<Rigidbody>().velocity = Vector3.zero;
+        Player.GetComponent<Rigidbody>().isKinematic = true;
         Debug.Log("Game Over! Final Score: " + currentscore);
         
     }
@@ -309,8 +308,8 @@ public class GameManager : MonoBehaviour
 
         Time.timeScale = Time.timeScale == 0 ? 1 : 0;
         ESC.SetActive(!ESC.activeSelf);
-        
-        escmenuactive = !escmenuactive;
+
+        gameRunning = !gameRunning;
         Cursor.lockState = Cursor.lockState == CursorLockMode.Locked ? CursorLockMode.None : CursorLockMode.Locked;
         Cursor.visible = !Cursor.visible;
         Player.GetComponent<Rigidbody>().velocity = Vector3.zero;
@@ -325,7 +324,6 @@ public class GameManager : MonoBehaviour
     public void RestartGame()
     {
         Time.timeScale = 1f;
-        escmenuactive = false;
         Sunshine.restarted = true;
         SceneManager.LoadScene(1);
 
@@ -350,7 +348,6 @@ public class GameManager : MonoBehaviour
     {
         Time.timeScale = 1f;
         firsttime = false;
-        escmenuactive = false;
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
         SceneManager.LoadScene(0);
